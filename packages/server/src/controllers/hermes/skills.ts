@@ -243,7 +243,7 @@ async function resolveSkillDirFromConfig(
 async function scanSkillsDir(skillsDir: string, bundledManifest: Map<string, string>, hubNames: Set<string>, disabledList: string[], usageStats: Map<string, UsageStats>) {
   const allEntries = await readdir(skillsDir, { withFileTypes: true })
   const dirNames = allEntries
-    .filter(e => e.isDirectory() && !e.name.startsWith('.'))
+    .filter(e => !e.name.startsWith('.') && (e.isDirectory() || e.isSymbolicLink()))
     .map(e => e.name)
 
   // Classify directories: categories vs. flat skills
