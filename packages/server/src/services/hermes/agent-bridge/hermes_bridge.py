@@ -1051,6 +1051,8 @@ class AgentPool:
 
             _ensure_agent_imports()
             _suppress_bridge_platform_hint()
+            from hermes_cli.plugins import _ensure_plugins_discovered
+            _ensure_plugins_discovered()
             from run_agent import AIAgent
 
             with _profile_env(profile):
