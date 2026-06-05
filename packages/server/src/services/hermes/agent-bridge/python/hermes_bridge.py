@@ -261,6 +261,8 @@ def main(argv: list[str] | None = None) -> int:
 
     _set_path_env(args.agent_root, args.hermes_home)
     _ensure_agent_imports()
+    from hermes_cli.plugins import _ensure_plugins_discovered
+    _ensure_plugins_discovered()
     if args.worker_profile:
         _set_worker_profile_env(str(args.worker_profile or "default"))
         _log_worker_startup_context(str(args.worker_profile or "default"))
