@@ -748,10 +748,6 @@ class AgentPool:
         if db is None or db_count_after_prepersist is None:
             return
 
-        after_count = self._session_db_message_count(session.session_id, profile)
-        if after_count is None:
-            return
-
         messages = result.get("messages")
         if not isinstance(messages, list):
             return
@@ -764,10 +760,9 @@ class AgentPool:
         if not generated:
             return
 
-        already_persisted = max(0, after_count - db_count_after_prepersist)
-        if already_persisted >= len(generated):
+        after_count = self._session_db_message_count(session.session_id, profile)
+        if after_count is None or after_count >= db_count_after_prepersist + len(generated):
             return
-        generated = generated[already_persisted:]
 
         appended = 0
         for msg in generated:
@@ -930,24 +925,21 @@ class AgentPool:
                     except Exception:
                         # Non-fatal: fall through to default reasoning_config
                         pass
+                result = None
                 try:
                     result = session.agent.run_conversation(
                         message,
                         **kwargs,
                     )
                 finally:
-                    if _did_override_reasoning:
-                        session.agent.reasoning_config = _saved_reasoning_config
-                result = _jsonable(result if isinstance(result, dict) else {"value": result})
-                result_for_tail_sync = result
-                self._sync_result_tail_to_session_db(
-                    session,
-                    result,
-                    conversation_history,
-                    profile,
-                    db_count_after_prepersist,
-                )
-                tail_synced = True
+                    result = _jsonable(result if isinstance(result, dict) else {"value": result}) if result is not None else {}
+                    self._sync_result_tail_to_session_db(
+                        session,
+                        result,
+                        conversation_history,
+                        profile,
+                        db_count_after_prepersist,
+                    )
                 final_response = str(
                     result.get("final_response")
                     or result.get("response")
