@@ -1,5 +1,5 @@
 # Agent Map
-
+这个项目的包管理器是pnpm，不是npm切记，不要搞错了，我改成pnpm了，不要再用npm了
 This file is a short map for coding agents. Keep detailed guidance in `docs/`
 and keep this file small enough to fit into every task context.
 
