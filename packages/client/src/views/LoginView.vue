@@ -21,13 +21,7 @@ if (hasApiKey()) {
 
 onMounted(async () => {
   try {
-    const status = await fetchAuthStatus();
-    if (!status.hasPasswordLogin) {
-      // Auth disabled on backend — auto-login with dummy key
-      setApiKey('auth-disabled-' + Date.now());
-      router.replace('/hermes/chat');
-      return;
-    }
+    await fetchAuthStatus();
   } catch {
     // Login remains available; the submit request will surface connection errors.
   }
