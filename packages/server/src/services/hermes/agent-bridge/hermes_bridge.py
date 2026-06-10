@@ -1666,8 +1666,13 @@ class AgentPool:
             return
 
         after_count = self._session_db_message_count(session.session_id, profile)
-        if after_count is None or after_count >= db_count_after_prepersist + len(generated):
+        if after_count is None:
             return
+
+        already_persisted = max(0, after_count - db_count_after_prepersist)
+        if already_persisted >= len(generated):
+            return
+        generated = generated[already_persisted:]
 
         appended = 0
         for msg in generated:
