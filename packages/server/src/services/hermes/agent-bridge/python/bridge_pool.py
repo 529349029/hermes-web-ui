@@ -932,6 +932,8 @@ class AgentPool:
                         **kwargs,
                     )
                 finally:
+                    if _did_override_reasoning:
+                        session.agent.reasoning_config = _saved_reasoning_config
                     result = _jsonable(result if isinstance(result, dict) else {"value": result}) if result is not None else {}
                     self._sync_result_tail_to_session_db(
                         session,
