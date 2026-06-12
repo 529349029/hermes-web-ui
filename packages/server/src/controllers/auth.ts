@@ -8,6 +8,7 @@ import {
   countUsers,
   createUser,
   deleteUser,
+  findFirstUser,
   findUserById,
   findUserByUsername,
   getUserAvatar,
